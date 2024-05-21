@@ -1,6 +1,7 @@
 package blacksky.messenger.server
 
 import blacksky.messenger.server.models.Conversation
+import blacksky.messenger.server.models.Message
 import blacksky.messenger.server.models.User
 import blacksky.messenger.server.services.DataService
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -20,10 +21,10 @@ fun main(args: Array<String>) {
         addUser(dudka)
         addUser(sufler)
         addConversation(Conversation("Amogus - Dudka").apply { participants.add(amogus) }
-            .apply { participants.add(dudka) })
+            .apply { participants.add(dudka) }.apply { messages.add(Message(dudka, "I'm dudka")) })
         addConversation(Conversation("Amogus - Sufler").apply { participants.add(amogus) }
-            .apply { participants.add(sufler) })
+            .apply { participants.add(sufler) }.apply { messages.add(Message(amogus, "I'm amogus")) })
         addConversation(Conversation("NSU").apply { participants.add(amogus) }.apply { participants.add(dudka) }
-            .apply { participants.add(sufler) })
+            .apply { participants.add(sufler) }.apply { messages.add(Message(sufler, "I'm sufler")) })
     }
 }
