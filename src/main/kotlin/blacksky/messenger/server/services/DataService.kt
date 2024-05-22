@@ -32,6 +32,7 @@ object DataService {
 
     fun addUser(password: String, dto: CreateUserDto) =
         if (password.hashCode() == ADMIN_PASSWORD_HASH) UserDto(dto.toUser().also {
+            if (userByLogin.containsKey(it.login)) throw BadRequestException("User already exists")
             userByLogin[it.login] = it
         }) else throw UnauthorizedException("Bad password")
 
@@ -61,8 +62,8 @@ object DataService {
             ?: throw NotFoundException("No such conversation")) {
             val admin = getUserByToken(token)
             if (creator.id != admin.id) throw ForbiddenException("You are not the conversation creator")
-            if (haveParticipant(dto.userId)) throw BadRequestException("User is already member")
-            val user = userByLogin.values.firstOrNull { it.id == dto.userId } ?: throw NotFoundException("No such user")
+            val user = userByLogin[dto.login] ?: throw NotFoundException("No such user")
+            if (haveParticipant(user.id)) throw BadRequestException("User is already member")
             participants.add(user)
         }
     }

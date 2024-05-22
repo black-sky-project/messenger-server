@@ -9,7 +9,7 @@ data class PostMessageDto(val conversationId: UUID, val text: String)
 
 data class CreateConversationDto(val name: String)
 
-data class AddUserToConversationDto(val userId: UUID, val conversationId: UUID)
+data class AddUserToConversationDto(val login: String, val conversationId: UUID)
 
 data class CreateUserDto(val login: String, val password: String) {
     fun toUser() = User(login, password.hashCode())
