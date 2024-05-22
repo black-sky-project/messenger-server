@@ -4,15 +4,29 @@ import blacksky.messenger.server.models.Conversation
 import blacksky.messenger.server.models.Message
 import blacksky.messenger.server.models.User
 import blacksky.messenger.server.models.haveParticipant
+import kotlinx.coroutines.*
+import java.io.Closeable
 import java.util.*
+import kotlin.time.Duration.Companion.seconds
 
 data class PostMessageDto(val authorId: UUID, val conversationId: UUID, val text: String)
 
-object DataService {
+object DataService : Closeable {
     private val userByLogin = mutableMapOf<String, User>()
     private val conversations = mutableListOf<Conversation>()
-    private val userIdByToken = mutableMapOf<UUID, UUID>()  // TODO: Implement housekeeping
+    private val userIdByToken = mutableMapOf<UUID, UUID>()
+    private const val TOKEN_LIMIT = 10_000
+    private val scope = CoroutineScope(Job() + Dispatchers.Default)
+    private val housekeepingJob = scope.launch { doHouseKeeping() }
 
+    private fun genToken(user: User): UUID = UUID.randomUUID().apply { userIdByToken[this] = user.id }
+
+    private suspend fun doHouseKeeping() {
+        while (true) {
+            if (userIdByToken.size > TOKEN_LIMIT) userIdByToken.clear()
+            delay(10.seconds)
+        }
+    }
 
     fun addUser(user: User) = user.also { userByLogin[it.login] = it }  // TODO: Rework. Debug only
 
@@ -29,6 +43,5 @@ object DataService {
 
     fun postMessage(token: UUID, dto: PostMessageDto): Message = TODO("Not implemented yet")
 
-
-    private fun genToken(user: User): UUID = UUID.randomUUID().apply { userIdByToken[this] = user.id }
+    override fun close() = runBlocking { housekeepingJob.cancelAndJoin() }
 }
