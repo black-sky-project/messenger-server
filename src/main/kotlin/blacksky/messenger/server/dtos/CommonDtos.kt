@@ -5,7 +5,7 @@ import blacksky.messenger.server.models.Message
 import blacksky.messenger.server.models.User
 import java.util.*
 
-data class PostMessageDto(val authorId: UUID, val conversationId: UUID, val text: String)
+data class PostMessageDto(val conversationId: UUID, val text: String)
 
 data class CreateConversationDto(val name: String)
 

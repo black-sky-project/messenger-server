@@ -6,6 +6,7 @@ import blacksky.messenger.server.exceptions.ForbiddenException
 import blacksky.messenger.server.exceptions.NotFoundException
 import blacksky.messenger.server.exceptions.UnauthorizedException
 import blacksky.messenger.server.models.Conversation
+import blacksky.messenger.server.models.Message
 import blacksky.messenger.server.models.User
 import blacksky.messenger.server.models.haveParticipant
 import kotlinx.coroutines.CoroutineScope
@@ -47,7 +48,16 @@ object DataService {
         getFullConversations(token).firstOrNull { it.id == conversationId }?.messages?.map { MessageDto(it) }
             ?: throw NotFoundException("No such conversation")
 
-    fun postMessage(token: UUID, dto: PostMessageDto): MessageDto = TODO("Not implemented yet")
+    fun postMessage(token: UUID, dto: PostMessageDto): MessageDto {
+        val user = getUserByToken(token)
+        val conversation =
+            conversations.firstOrNull { it.id == dto.conversationId } ?: throw NotFoundException("No such conversation")
+        if (!conversation.haveParticipant(user.id)) throw ForbiddenException("You are not chat participant")
+        return with(Message(user, dto.text)) {
+            conversation.messages.add(this)
+            MessageDto(id, author.id, text)
+        }
+    }
 
     fun addUserToConversation(token: UUID, dto: AddUserToConversationDto) {
         with(conversations.firstOrNull { it.id == dto.conversationId }
