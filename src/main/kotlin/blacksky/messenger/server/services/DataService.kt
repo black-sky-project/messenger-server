@@ -53,10 +53,7 @@ object DataService {
         val conversation =
             conversations.firstOrNull { it.id == dto.conversationId } ?: throw NotFoundException("No such conversation")
         if (!conversation.haveParticipant(user.id)) throw ForbiddenException("You are not chat participant")
-        return with(Message(user, dto.text)) {
-            conversation.messages.add(this)
-            MessageDto(id, author.id, text)
-        }
+        return MessageDto(Message(user, dto.text).apply { conversation.messages.add(this) })
     }
 
     fun addUserToConversation(token: UUID, dto: AddUserToConversationDto) {

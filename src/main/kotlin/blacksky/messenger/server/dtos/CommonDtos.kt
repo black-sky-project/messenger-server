@@ -19,8 +19,8 @@ data class UserDto(val id: UUID, val login: String) {
     constructor(user: User) : this(user.id, user.login)
 }
 
-data class MessageDto(val id: UUID, val authorId: UUID, val text: String) {
-    constructor(message: Message) : this(message.id, message.author.id, message.text)
+data class MessageDto(val id: UUID, val authorId: UUID, val text: String, val date: Date) {
+    constructor(message: Message) : this(message.id, message.author.id, message.text, message.date)
 }
 
 data class ConversationDto(val id: UUID, val creatorId: UUID, val name: String, val participants: List<UserDto>) {
