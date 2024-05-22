@@ -1,5 +1,7 @@
 package blacksky.messenger.server.services
 
+import blacksky.messenger.server.exceptions.NotFoundException
+import blacksky.messenger.server.exceptions.UnauthorizedException
 import blacksky.messenger.server.models.Conversation
 import blacksky.messenger.server.models.Message
 import blacksky.messenger.server.models.User
@@ -57,11 +59,11 @@ object DataService : Closeable {
     fun addUser(password: String, dto: CreateUserDto) =
         if (password.hashCode() == ADMIN_PASSWORD_HASH) UserDto(dto.toUser().also {
             userByLogin[it.login] = it
-        }) else throw Exception("Bad password")
+        }) else throw UnauthorizedException("Bad password")
 
     fun tryLogin(login: String, password: String) =
         userByLogin[login]?.takeIf { it.passwordHash == password.hashCode() }?.let { genToken(it) }
-            ?: throw Exception("Login failed")
+            ?: throw UnauthorizedException("Login failed")
 
     fun addConversation(token: UUID, dto: CreateConversationDto) =
         ConversationDto(Conversation(getUserByToken(token), dto.name).apply { conversations.add(this) })
@@ -71,7 +73,7 @@ object DataService : Closeable {
 
     fun getMessages(token: UUID, conversationId: UUID) =
         getFullConversations(token).firstOrNull { it.id == conversationId }?.messages?.map { MessageDto(it) }
-            ?: throw Exception("No such conversation")
+            ?: throw NotFoundException("No such conversation")
 
     fun postMessage(token: UUID, dto: PostMessageDto): MessageDto = TODO("Not implemented yet")
 
@@ -81,7 +83,7 @@ object DataService : Closeable {
 
     private fun getFullConversations(token: UUID) =
         userIdByToken[token]?.let { userId -> conversations.filter { it.haveParticipant(userId) } }
-            ?: throw Exception("No such token")
+            ?: throw UnauthorizedException("No such token")
 
     private fun getUserByToken(token: UUID): User = TODO("Not implemented yet")
 }
