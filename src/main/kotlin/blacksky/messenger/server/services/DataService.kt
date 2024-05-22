@@ -13,6 +13,8 @@ data class PostMessageDto(val authorId: UUID, val conversationId: UUID, val text
 
 data class CreateConversationDto(val name: String)
 
+data class AddUserToConversationDto(val userId: UUID, val conversationId: UUID)
+
 data class CreateUserDto(val login: String, val password: String) {
     fun toUser() = User(login, password.hashCode())
 }
@@ -72,6 +74,8 @@ object DataService : Closeable {
             ?: throw Exception("No such conversation")
 
     fun postMessage(token: UUID, dto: PostMessageDto): MessageDto = TODO("Not implemented yet")
+
+    fun addUserToConversation(token: UUID, dto: AddUserToConversationDto): Nothing = TODO("Not implemented yet")
 
     override fun close() = runBlocking { housekeepingJob.cancelAndJoin() }
 
