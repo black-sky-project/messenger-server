@@ -14,3 +14,6 @@ data class InternalErrorException(override val message: String) : RuntimeExcepti
 
 @ResponseStatus(HttpStatus.UNAUTHORIZED)
 data class UnauthorizedException(override val message: String) : RuntimeException()
+
+@ResponseStatus(HttpStatus.FORBIDDEN)
+data class ForbiddenException(override val message: String) : RuntimeException()

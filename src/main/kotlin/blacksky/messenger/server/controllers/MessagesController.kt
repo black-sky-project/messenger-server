@@ -1,7 +1,7 @@
 package blacksky.messenger.server.controllers
 
 import blacksky.messenger.server.services.DataService
-import blacksky.messenger.server.services.PostMessageDto
+import blacksky.messenger.server.dtos.PostMessageDto
 import org.springframework.web.bind.annotation.*
 import java.util.*
 

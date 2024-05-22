@@ -1,7 +1,7 @@
 package blacksky.messenger.server.controllers
 
-import blacksky.messenger.server.services.AddUserToConversationDto
-import blacksky.messenger.server.services.CreateConversationDto
+import blacksky.messenger.server.dtos.AddUserToConversationDto
+import blacksky.messenger.server.dtos.CreateConversationDto
 import blacksky.messenger.server.services.DataService
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -19,5 +19,5 @@ class ConversationsController {
     @PutMapping("/addUser")
     fun addUserToConversation(
         @RequestHeader("Token") token: UUID, @RequestBody dto: AddUserToConversationDto
-    ): Nothing = DataService.addUserToConversation(token, dto)
+    ) = DataService.addUserToConversation(token, dto)
 }

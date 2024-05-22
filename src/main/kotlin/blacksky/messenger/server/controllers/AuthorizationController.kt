@@ -1,6 +1,6 @@
 package blacksky.messenger.server.controllers
 
-import blacksky.messenger.server.services.CreateUserDto
+import blacksky.messenger.server.dtos.CreateUserDto
 import blacksky.messenger.server.services.DataService
 import org.springframework.web.bind.annotation.*
 
